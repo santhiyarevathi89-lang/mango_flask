@@ -1,17 +1,20 @@
 import os
+from pymongo import MongoClient
 from flask import Flask, render_template_string, request, redirect, url_for, session, flash
-from pymongo import MongoClient, errors
 
 # ================= FLASK CONFIG =================
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "secret_key_123")
 
-# ================= LOGIN CREDENTIALS =================
+# ================= LOGIN =================
 USERNAME = os.environ.get("APP_USERNAME", "admin")
 PASSWORD = os.environ.get("APP_PASSWORD", "1234")
 
 # ================= MONGODB CONNECTION =================
-mongo_uri = os.environ.get("MONGO_URI")
+mongo_uri = os.environ.get(
+    "MONGO_URI",
+    "mongodb+srv://Cloud_base_v1S:cloud_123@cluster0.hlc6abe.mongodb.net/cloud_db?retryWrites=true&w=majority"
+)
 
 try:
     mongo_client = MongoClient(
@@ -25,7 +28,7 @@ try:
     mongo_db = mongo_client["cloud_db"]
     mongo_collection = mongo_db["BACK_COVER_ASSY"]
     print("✅ MongoDB Atlas Connected")
-except errors.ServerSelectionTimeoutError as e:
+except Exception as e:
     print("❌ MongoDB Atlas Connection Failed:", e)
     mongo_collection = None
 
